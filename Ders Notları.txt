@@ -1,0 +1,245 @@
+# EasyCashIdentityProject
+Ders1 Genel Bilgilendirme ve Yol Haritası
+
+Ders2 Katmanların Oluşturulması / Nuget Packetlerinin Yüklenmesi
+Adım 1. Visual Studio 2022 de "Blank Solution" ile yeni bir çözüm oluşturuyor. 
+	Çözüm oluşturuken dikkat edilmesi gereken nokta C# için olanı değil "Other " olanı seçmemiz gerekiyor. 
+	Yani "Android" cihazlarda kullanılabilir olanı.
+Adım 2. Çözümün adını "EasyCashIdentityProject" olarak belirliyoruz.
+Adım 3. Çözümün oluşturulmasının ardından "Solution Explorer" üzerindeki çözümün üzerine sağ tıklıyoruz. 
+	Add menüsundeki New Project/Class Library şablonu ile sırasıyla "Entitylayer","DataAccessLayer","Business Layer" ve "DtoLayer" katmanlarını oluşturuyoruz.
+Adım 4. Yine çözümün üzerinde sağ tıklıyoruz ve Add menüsünden New Project/ASP.NET Core Web App (Model-View-Controller) şablonu ile "PresentationLayer" katmanını oluşturuyoruz.
+Adım 5. Çözümün üzerinde sağ tıklıyoruz. "Manage Nuget Package For Solution" 'ı tıklıyoruz. 
+	Açılan pencerenin Browse kısmı üzerinden aşağıda yazılan paketlerin sürümlerini sırasıyla yüklüyoruz.
+	Microsoft.EntityFrameworkCore 6.0.16
+	Microsoft.EntityFrameworkCore.Design 6.0.16
+	Microsoft.EntityFrameworkCore.SqlServer 6.0.16
+	Microsoft.EntityFrameworkCore.Tools 6.0.16
+	Microsoft.AspNetCore.Identity Son sürümü
+	Microsoft.AspNetCore.Identity.EntityFrameworkCore 6.0.16
+
+Ders3/4 IDENTITY İŞLEMLERİ - REFERANS İŞLEMLERİ 
+Adım 6. EntityLayer katmanı üzerinde sağ tıklatıyoruz. 
+	"Add" menüsünden öncelikle "Concrete" adında bir klasör oluşturuyor. 
+	Klasörü oluşturduktan sonra üzerinde sağ tıklatarak "Add" menüsünde "Class" seçip aşağıdaki sınıfları oluşturuyor. 
+	Ve her sınıfın Access Modifier ını "public" olarak değiştiriyoruz.
+	CustomerAccount
+	CustumerAccountProcess
+Adım 7. Her oluşturulan sınıfın içerisine propertyleri yazıyoruz. 
+	public class CustomerAccount
+  	{
+      	public int CustomerAccountID { get; set; }
+      	public string CustomerAccountNumber { get; set; }
+      	public string CustomerAccountCurrency { get; set; }
+      	public decimal CustomerAccountBalance { get; set; }
+      	public string BankBranch { get; set; }
+  	}
+	public class CustomerAccountProcess
+ 	{
+     	public int CustomerAccountProcessID { get; set; }
+     	public string ProcessType { get; set; }
+     	public decimal Amount { get; set; }
+     	public DateTime ProcessDate { get; set; }
+ 	} 
+Adım 8. DataAccessLayer Katmanı üzerinde sağ tıklatıyoruz. 
+	"Add" menüsünde "Project Reference" 'ı seçiyoruz. Açılan listeden "EntityLayer" katmanını seçiyoruz.
+Adım 9. Yukarıdaki adımda olduğu gibi BusinessLayer katmanı için "EntityLayer" ve "DataAccessLayer" katmanları reference olarak atıyoruz.
+Adım 10. PresentationLayer katmanı içinde "EntityLayer", "DataAccessLayer" ve "BusinessLayer" katmanları reference olarak atıyoruz.
+Adım 11. DataAccessLayer katmanı üzerinde sağ tıklatıyoruz. 
+	 Add menüsünde yer alan New Folder ile "Concrete" adında yeni bir klasör oluşturuyoruz. 
+	 Bu klasörün içerisinde yine Add menüsündeki class vasıtasıyla "Context" adında yeni bir class oluşturuyoruz.
+Adım 12. Class 'ı public yaaptıktan sonra Context sınıfını "IdentityDbContext sınıfında türetiyoruz.
+Adım 13. Classın içerisine "override onconfiguring" yazıp enter tuşuna baştığımızda ilgili method oluşturulmuş olacaktır.
+Adım 14. Methodun içerisinde yer alan "base.ConfigureConventions(configurationBuilder);" kodu siliyoruz. 
+	 Yerine "optionBuilder.UseSqlServer("server=HAKANBINGOL-NB\SQLEXPRESS; inital catalog=EasyCashDb; integrated security=true"); yazıyoruz.
+Adım 15. Methodun içerisine DBSet<> tanımlamalarını yapıyoruz.
+
+Adım 16. PresentationLayer katmanının üzerinde sağ tıklıyoruz ve menüden "Set as Startup Project" i seçiyoruz.
+Adım 17. Package Manager Console geçiyoruz. Ve clear yazıp enter tuşuna basarak konsolu temizliyoruz. 
+	 "add-migration first_mig" yazarak enter tuşuna basıyoruz.
+Adım 18. Console 'a "update-database" yazıp entere basıyoruz. 
+	 Böylece EntityLayer katmanında bulunan sınıflarımızı SQL 'e tablo olarak kaydetmiş oluyoruz.
+
+Ders5 SQL->SQL ÜZERİNDEKİ AspNet User TABLOSUNUN ÖZELLEŞTİRİLMESİ
+Adım 19. Identity kütüphanesi ile SQL Server üzerinde oluşturduğumuz database otomatik olarak gelen AspNetUsers tablosuna "Müşterinin Adı, Soyadı, Adres bilgisi" vb. alanların eklenmesi için Entity katmanındaki Concrete klasörünün üzerinde sağ tıklıyoruz ve AppUser adında yeni bir class oluşturuyoruz.
+Adım 20. Classın Access Modifierını "public" olarak değiştiriyoruz. AppUser sınıfımızı SQL 'de yer alan AspNetUsers sınıfı ile ilişkilendirmek için "public class AppUser:IdentityUser" yazıyoruz.
+Adım 21. Sırasıyla Müşterinin ismini, soyismini, ilçesi vb. aşağıdaki örnek kod satırlarında olduğu gibi tanımıyoruz.
+	public string Name { get; set; }
+	public string Surname { get; set; }
+	prublic string District { get; set; }
+	public string City { get; set; }
+	public string ImageUrl { get; set; }
+Adım 22. SQL 'deki database 'imize Identity kütüphanesinden gelen otomatik tablolardaki ID 'ler string tiptedir. AspNetUsers tablosundaki ID alanınını "int" tipe dönüştürmek için "public class AppUser:IdentityUser" kodunun sonuna <> karakterlerinin arasına "int" yazmamız yeterli olacaktır. 
+Adım 23. Fakat Bu tablo ile ilişkili olan AspNetUserRoles tablosundaki ID alanının tipini de "int" çevirmek için ise öncelikle Enttiy katmanındaki concrete klasöründe AppRole adında yeni bir class oluşturup bu classın Access Modefier ını "public" olarak değiştiriyoruz. Ve "public class AppRole:IdentityRole<int> olarak türetiyoruz.
+Adım 24. DataAccessLayer katmanındaki context.cs classının içine giriyoruz. "public class Context:IdentityDbContext" kodunun sonuna <> koyuyoruz. Ve "public class Context : IdentityDbContext<AppUser, AppRole, int>" olacak şekilde değişterek özelleştiriyoruz.
+
+DERS6 DTO KATMANI VE APPUSERREGİSTERDTO SINIFININ YAZILMASI
+Adım 25. Öncelikle Entity katmanında oluşturmuş olduğumuz CustomerAccount sınıfı ile AppUser sınıfı arasında bir ilişki oluşturuyoruz. 
+	1. CustomerAccounts sınıfın içinde methoda
+	public int AppUserID { get; set; }
+	public AppUser AppUser { get; set; }
+	
+	2. AppUser sınıfının içerindeki methoda ise
+	public List<CustomerAccount> CustomerAccounts { get; set; }
+
+Adım 26. Yaptığımız değişiklikleri Sql tarafına add-migration ve update-database işlemleri ile aktarıyoruz.
+Adım 27. Şimdi DTO katmanındaki işlemlere başlıyoruz. DTO Data Transfer Object, Entitylerin tüm özellikleri yerine yanlızca istediğimiz özellikleri kullanmamızı sağlayan katmandır.
+Adım 28. EasyCashIdentityProject.DtoLayer katmanının üzerinde sağ tıklıyoruz. Add menüsünden New Folder ı seçiyor ve sırasıyla aşağıdaki klasörleri oluşturuypruz.
+	AppRoleDtos
+	AppuserDtos
+	CustomerAccountDtos
+	CustomerAccountProcessDtos
+Adım 29. AppUserDtos klasörünün üzerinde sağ tıklıyoruz. Add menüsü yardımı ile AppUserRegisterDto adında bir sınıf oluşturuyoruz. Ve içerisine aşağıdaki nesneleri ekliyoruz.
+	public string Name { get; set; }
+	public string Surname { get; set; }
+	public string Email { get; set; }
+	public string Username{ get; set; }
+	public string Passeword { get; set; }
+	public string ConfirmedPassword { get; set; }
+
+DERS7 FLUENTVALIDATION KÜTÜPHANESİNİN KURULUMU VE BUSİNESS KATMAN ÜZERİNDE VALIDATIONRULES YAPISININ OLUŞTURULMASI
+Adım 30. EasyCashProject.BusinessLayer katmanı üzerinde sağ tıklıyoruz. Manage Nuget Package tıklıyoruz. Açılan penceredeki browse kısmına "Fluentvalidation" yazıp entera basıyoruz. Ve sırasıyla aşağıdaki paketleri yüklüyoruz.
+	FluentValidation 11.7.1
+	FluentValidation.DependencyInjectionExtensions 11.7.1
+	FluentValidation.AspNetCore 11.3.0
+
+Adım 31. EasyCashProject.BusinessLayer katmanı üzerinde sağ tıklıyoruz. Add menüsü üzerinden new folder ile "ValidationRules" adında bir klasör oluşturuyoruz. Daha sonra bu klasörün altına ise aşağıdaki klasörleri oluşturuyoruz.
+	AppUserValidationRules
+	AppRoleValidationRules
+	CustomerAccountValidationRules
+	CustomerAccountProcessValidationRules
+
+Adım 32. AppUserValidationRules klasörü üzerinde sağ tıklıyoruz. Add menüsünden "AppUserRegisterValidator" adında bir class oluşturuyoruz. 
+Adım 33. Classın access modifierını public olarak değiştiriyoruz. AbstractValidator sınıfından miras alacak şekilde ayarlıyoruz. Bu sınıf bizden bir tane T değer belirtmemizi isteyecektir. <> arasına istersek "AppUser" yazabiliriz.
+	Fakat bu durumda bu sınıfın içerisinde yer alan tüm property ler listelenecektir. Halbuki bizim bazı propertyleri kullanacağımızdan solid prnsipleri gereği hepsini çağırmak istemiyoruz. 
+	Bu noktada yardımımıza daha önce AppUser DtoLayer katmanında oluşturduğumuz "AppUserRegisterDto" sınıfı koşmaktadır. Bu sınıfın içerisinde gelmesini istediğimiz propertyleri yazacağız. Bir çeşit filtre görevi görecektir.
+	Buna göre methodumuz "public class AppUserRegisterValidator : AbstractValidator<AppUserRagisterDto>" olacak şekilde ayarlıyoruz. AppUserRegisterDto 'nun altı kızaracaktır. Ctrl + . ile projeye referans olarak atıyoruz.
+
+Adım 34. ctor yazıp tab tab yaparak yapıcı method oluşturuyoruz. RuleFor(x => x.Name).NotEmpty().WithMessage("Adı alanı boş geçilemez");
+	RuleFor(x => x.Surname).NotEmpty().WithMessage("Soyadı alanı bıoş geçilemez");
+	RuleFor(x => x.Username).NotEmpty().WithMessage("Kullanıcı adı alanı boş geçilemez");
+	RuleFor(x => x.Email).NotEmpty().WithMessage("Email alanı boş geçilemez");
+	RuleFor(x => x.Password).NotEmpty().WithMessage("Şifre alanı boş geçilemez");
+	RuleFor(x => x.ConfirmedPassword).NotEmpty().WithMessage("Şifre tekrar alanı boş geçilemez");
+	RuleFor(x => x.ConfirmedPassword).Equal(y => y.Password).WithMessage("Şifreleriniz eşleşmemektedir.");
+	RuleFor(x => x.Email).EmailAddress().WithMessage("Lütfen geçerli bir mail adresi giriniz.");
+	RuleFor(x => x.Name).MaximumLength(30).WithMessage("En fazla 30 karakter olabilir");
+	RuleFor(x => x.Name).MinimumLength(2).WithMessage("En az 2 karakter olmalıdır");
+
+DERS8 INTERFACE VE REPOSITORY LERİN OLUŞTURULMASI
+Adım 35. Data Acces Layer katmanı üzerinde sağ tıklıyoruz. Add menüsünde New Folder ile "Abstract" adında yeni bir klasör oluşturuyoruz.
+Adım 36. Oluşturupumuz Abstract klasörünün üzerinde sağ tıklıyoruz. New Item ile IGenericDal adında yeni bir interface oluşturuyoruz.
+Adım 37. Interface 'ın Access Modiefier ını public olarak değiştiriyoruz. Ve Methodun içerisine aşağıda satırları yazıyoruz.
+
+	public interface IGenericDal<T> where T : class
+	{
+	void Insert(T t);
+	void Update(T t);
+	void Delete(T t);
+	T GetById(int id);
+	List<T> GetList();
+	}
+Adım 38. Abstract klasörü üzerinden yine sağ tıklıyoruz. ICustomerAccountDal adında yeni bir interface oluşturuyoruz. Ve aşağıdaki methodu yazıyoruz.
+	public interface ICustomerAccountDal : IGenericDal<CustomerAccount>
+	{
+	}
+Adım 39. Yukarıdaki örnektekine göre ICustomerAccountProcessDal interface 'ı oluştuyoru ve methodu içerisine yazıyoruz.
+Adım 40. DataAccessLayer katmanı üzerinde sağ tıklıyoruz. Add menüsünden New Folder ile Repositories adında yeni bir klasör oluştuyoruz.
+Adım 41. Bu Klasörün üzerinde sağ tıklıyoruz. New Class ile GenericRepository adında yeni bir sınıf oluştuyoruz. 
+	 T adında bir değer alacağını ve ayrıca IGenericDal<T> dan da miras alacağını ve alacğı bu mirasın bir sınıf olacağını tanımlıyoruz.
+	
+	public class GenericRepository<T> : IGenericDal<T> where T : class
+	{
+	}
+	Bu noktada IGenericDal ın altı kızaracaktır. Bunun sebebi IGenericDal interface den implemente edeceğimiz methodların olmasıdır. 
+	Sağ tıklatıp methodları implemente ediyoruz.
+	
+	public void Delete(T t)
+	{
+	using var context = new Context();
+ 	context.Set<T>().Remove(t);
+	context.SaveChanges();
+	}
+	public T GetByID(int id)
+	{
+	using var context = new Context();
+ 	return context.Set<T>().Find(id);
+	}
+	public void GetList(T t)
+	{
+	using var context = new Context();
+ 	return context.Set<T>().ToList(id);
+	}
+	public void Update(T t)
+	{
+	using var context = new Context();
+ 	context.Set<T>().Update(t);
+	context.SaveChanges();
+	}
+	public void Insert(T t)
+	{
+	using var context = new Context();
+ 	context.Set<T>().Add(t);
+	context.SaveChanges();
+	}
+
+DERS9 BUSINESS KATMANI
+Adım 42. Business katmanı üzerinde sağ tıklıyoruz. Add menüsünden New Folder ile Abstract adında yeni bir klasör oluşturuyoruz.
+Adım 43. Aynı şekilde Business katmanı üzerinde Concrete adında yeni bir klasör oluşturuyoruz.
+Adım 44. Abstract klasörü üzerinde sağ tıklıyoruz. 
+	 Add menüsü üzerinden new item ile IGenericService adındanyeni bir interface oluşturuyoruz.
+Adım 45. İnterface in Access Modifierı nı public olacak şekilde ayarlıyoruz. 
+	 İnterface dışarıdan bir T değeri alacak ve bu T değeri bir sınıf olacağını belirliyoruz.
+	 public interface IGenericService<T> where T : class {}
+Adım 46. Interface içerisine aynı IGenericDal da olduğu gibi methodlarımızı yazıyoruz. 
+	 IGenericDal dan farklı olarak burada  
+	 public interface IGenericService<T> where T : class 
+	 {
+	 void TInsert(T t);
+	 void TUpdate(T t);
+	 void TDelete(T t);
+	 T TGetByID(int id);
+	 List<T> TGetList();
+	 }
+Adım 47. Abstract klasörü üzerinde sağ tıklıyoruz. 
+	 Add menüsü üzerinden new item ile ICustomerAccountService adında yeni bir interface oluşturuyoruz.
+Adım 48. İnterface in Access Modifierı nı public olacak şekilde ayarlıyoruz. 
+	 IGenericServiceten türetiyoruz. Ve alacağı T değerinin CustomerAccount olacağını belirliyoruz.
+	 public interface ICustomerAccountService : IGenericService<CustomerAccount> {}
+Adım 49. Abstract klasörü üzerinde sağ tıklıyoruz. Add menüsü üzerinden new item ile ICustomerAccountProcessService adında yeni bir interface oluşturuyoruz.
+Adım 48. İnterface in Access Modifierı nı public olacak şekilde ayarlıyoruz. 
+	 IGenericServiceten türetiyoruz. Ve alacağı T değerinin CustomerAccountProcess olacağını belirliyoruz.
+	 public interface ICustomerAccountProcessService : IGenericService<CustomerAccount> {}
+
+Adım 50. Concrete klasörünün üzerinde sağ tıklıyoruz. Add menüsünde Class ı tıklayarak CustumerAccountManager adında bir clas oluşturuyoruz.
+Adım 51. Bu sınıfı ICostumerAccountService ten miraz alıyoruz. Ctrl + . ile methodlarımızı implemente ediyoruz.
+Adım 52. Burada dependence injection uygulayacağız. Ama öncesinde file oluşturuyoruz.
+	 private readonly ICustomerAccountDal _customerAccountDal; {}
+Adım 53. public class CostumerAccountManager : ICustomerAccountService yazısındaki class 'ın üzerinde sağ tıklıyoruz.
+	 Açılan menüden Generate constructor tıklarayak yapıcı methodumuzu oluşturuyoruz.
+	 public CustomerAccountManager(ICustomerAccountDal customerAccountDal)
+	 {
+	 _customerAccountDal = customerAccountDal;
+	 }
+Adım 54. İmplemente ettiğimiz methodları düzeltiyoruz.
+	 public void TDelete(CustomerAccount t)
+	 {
+	 _customerAccountDal.Delete(t);
+	 }
+ 	 public CustomerAccount TGetByID(int id)
+	 {
+	 return _customerAccountDal.GetByID(id);
+	 }
+	 public List<CustomerAccount> TGetList()
+	 {
+	 return _customerAccountDal.GetList(id);
+	 }
+	  public void TInsert(CustomerAccount t)
+	 {
+	 _customerAccountDal.Add(t);
+	 }
+ 	 public void TUpdate(CustomerAccount t)
+	 {
+	 _customerAccountDal.Update(t);
+	 }
+Adım 55. Yukarıdaki adımları izleyerek CustomerAccountPorcessManager sınıfını oluştuyoruz.
