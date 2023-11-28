@@ -1,3 +1,5 @@
+
+
 # EasyCashIdentityProject
 Ders1 Genel Bilgilendirme ve Yol Haritası
 
@@ -53,7 +55,8 @@ Adım 13. Classın içerisine "override onconfiguring" yazıp enter tuşuna baş
 Adım 14. Methodun içerisinde yer alan "base.ConfigureConventions(configurationBuilder);" kodu siliyoruz. 
 	 Yerine "optionBuilder.UseSqlServer("server=HAKANBINGOL-NB\SQLEXPRESS; inital catalog=EasyCashDb; integrated security=true"); yazıyoruz.
 Adım 15. Methodun içerisine DBSet<> tanımlamalarını yapıyoruz.
-
+	 public DbSet<CustomerAccount> CustomerAccounts { get; set; }
+         public DbSet<CustomerAccountProcess> CustomerAccountProcesses { get; set; }
 Adım 16. PresentationLayer katmanının üzerinde sağ tıklıyoruz ve menüden "Set as Startup Project" i seçiyoruz.
 Adım 17. Package Manager Console geçiyoruz. Ve clear yazıp enter tuşuna basarak konsolu temizliyoruz. 
 	 "add-migration first_mig" yazarak enter tuşuna basıyoruz.
@@ -72,6 +75,8 @@ Adım 21. Sırasıyla Müşterinin ismini, soyismini, ilçesi vb. aşağıdaki �
 Adım 22. SQL 'deki database 'imize Identity kütüphanesinden gelen otomatik tablolardaki ID 'ler string tiptedir. AspNetUsers tablosundaki ID alanınını "int" tipe dönüştürmek için "public class AppUser:IdentityUser" kodunun sonuna <> karakterlerinin arasına "int" yazmamız yeterli olacaktır. 
 Adım 23. Fakat Bu tablo ile ilişkili olan AspNetUserRoles tablosundaki ID alanının tipini de "int" çevirmek için ise öncelikle Enttiy katmanındaki concrete klasöründe AppRole adında yeni bir class oluşturup bu classın Access Modefier ını "public" olarak değiştiriyoruz. Ve "public class AppRole:IdentityRole<int> olarak türetiyoruz.
 Adım 24. DataAccessLayer katmanındaki context.cs classının içine giriyoruz. "public class Context:IdentityDbContext" kodunun sonuna <> koyuyoruz. Ve "public class Context : IdentityDbContext<AppUser, AppRole, int>" olacak şekilde değişterek özelleştiriyoruz.
+	 Package Manager Console geçiyoruz. Ve clear yazıp enter tuşuna basarak konsolu temizliyoruz. 
+	 "add-migration mig_add_appuser_approles_tables" yazarak enter tuşuna basıyoruz.		
 
 DERS6 DTO KATMANI VE APPUSERREGİSTERDTO SINIFININ YAZILMASI
 Adım 25. Öncelikle Entity katmanında oluşturmuş olduğumuz CustomerAccount sınıfı ile AppUser sınıfı arasında bir ilişki oluşturuyoruz. 
